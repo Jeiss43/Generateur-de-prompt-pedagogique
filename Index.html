@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub IA Stratège | ESEPAC</title>
+    <!-- Google Font: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.75);
+            --primary: #0ea5e9;
+            --secondary: #4f46e5;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --error: #f43f5e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(79,70,229,0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14,165,233,0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            padding: 2rem 1rem; line-height: 1.6;
+        }
+
+        .container {
+            width: 100%; max-width: 1000px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+            overflow: hidden; position: relative;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        .container::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            z-index: 10;
+        }
+
+        /* En-têtes */
+        header {
+            padding: 2.5rem 2.5rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo-img {
+            max-height: 70px;
+            margin-bottom: 1rem;
+            object-fit: contain;
+        }
+        h1 {
+            font-size: 2rem; font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem; letter-spacing: -0.02em;
+        }
+        header p { color: var(--primary); font-weight: 600; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .content { padding: 2.5rem; }
+
+        /* Cartes d'accueil & présentations */
+        .welcome-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            color: #cbd5e1;
+        }
+        .welcome-card h3 { color: white; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 700; }
+
+        /* Grille des approches */
+        .strategies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .strategy-btn {
+            background: rgba(15,23,42,0.6);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .strategy-btn:hover {
+            border-color: var(--primary);
+            background: rgba(14,165,233,0.1);
+            box-shadow: 0 10px 25px -5px rgba(14,165,233,0.15);
+            transform: translateY(-2px);
+        }
+        .strategy-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            background: rgba(14,165,233,0.15);
+            border: 1px solid rgba(14,165,233,0.3);
+            padding: 0.25rem 0.6rem;
+            border-radius: 99px;
+            width: fit-content;
+        }
+        .strategy-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.25rem;
+        }
+        .strategy-desc {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .strategy-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Formulaires & Inputs */
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-muted); font-size: 0.95rem; }
+        
+        input[type="text"], textarea {
+            width: 100%;
+            background: rgba(15,23,42,0.6);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: white; padding: 1rem 1.25rem;
+            border-radius: 12px; font-family: inherit; font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        input:focus, textarea:focus {
+            outline: none; border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(14,165,233,0.15);
+            background: rgba(15,23,42,0.9);
+        }
+        input.input-error, textarea.input-error {
+            border-color: var(--error) !important;
+            box-shadow: 0 0 0 4px rgba(244,63,94,0.2) !important;
+            animation: shake 0.3s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Boutons */
+        button.action-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white; border: none;
+            padding: 1rem 2rem; border-radius: 12px;
+            font-size: 1.05rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(14,165,233,0.3);
+            text-transform: uppercase; letter-spacing: 0.05em;
+            display: flex; justify-content: center; align-items: center; gap: 0.5rem;
+        }
+        button.action-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 25px -5px rgba(14,165,233,0.4); filter: brightness(1.1); }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-muted); box-shadow: none;
+        }
+        .btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,0.1); color: white; }
+
+        .button-group-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        @media(min-width: 600px) {
+            .button-group-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Barre de progression */
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            padding: 0.8rem 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .progress-container {
+            flex-grow: 1;
+            margin: 0 1.5rem;
+            background: rgba(255,255,255,0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Callout Neuro */
+        .neuro-box {
+            background: rgba(79,70,229,0.08);
+            border-left: 4px solid var(--secondary);
+            padding: 1.2rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+            font-size: 0.92rem;
+            color: #cbd5e1;
+        }
+        .neuro-box strong { color: var(--primary); }
+
+        /* Vues */
+        .page-view { transition: opacity 0.3s ease; }
+        .page-hidden { display: none; }
+        .page-active { display: block; }
+
+        /* Output Prompt Terminal */
+        .prompt-output-box {
+            background: rgba(15,23,42,0.9);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            font-family: monospace;
+            font-size: 0.92rem;
+            color: #f1f5f9;
+            width: 100%;
+            height: 320px;
+            resize: none;
+            line-height: 1.6;
+        }
+        .prompt-output-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 100;
+            background: var(--success); color: white;
+            padding: 0.9rem 1.5rem; border-radius: 12px;
+            font-weight: 700; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            display: flex; align-items: center; gap: 0.5rem;
+            transform: translateY(100px); opacity: 0; transition: all 0.3s ease;
+        }
+        #toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Responsive Mobile */
+        @media (max-width: 550px) {
+            body { padding: 1rem 0.5rem; }
+            .content { padding: 1.25rem; }
+            header { padding: 1.5rem 1rem; }
+            h1 { font-size: 1.6rem; }
+            header p { font-size: 0.9rem; }
+            .logo-img { max-height: 55px; }
+            .progress-container { margin: 0 0.75rem; }
+            #toast { left: 1rem; right: 1rem; bottom: 1rem; text-align: center; justify-content: center; }
+        }
+
+        footer {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification -->
+    <div id="toast">
+        <i class="fa-solid fa-check-circle"></i>
+        <span id="toast-message">Prompt copié !</span>
+    </div>
+
+    <div class="container">
+        <!-- HEADER AVEC LOGO ESEPAC -->
+        <header onclick="showHub()" style="cursor: pointer;" title="Retourner à l'accueil">
+            <img class="logo-img" src="Logo_Esepac_2021.png" alt="Logo ESEPAC">
+            <h1>Hub IA Stratège</h1>
+            <p>Master Packaging · ESEPAC</p>
+        </header>
+
+        <div class="content">
+
+            <!-- ================= PAGE 1: HUB ================= -->
+            <section id="page-hub" class="page-view page-active">
+                <div class="welcome-card">
+                    <h3>Ne laisse pas l'IA réfléchir à ta place. Fais-en ton coach !</h3>
+                    <p style="font-size:0.95rem; line-height:1.6;">
+                        Choisis ton objectif packaging, réponds à 2 ou 3 questions guidées et génère un <strong>prompt sur mesure verrouillé C-R-T-C</strong>. L'IA sera configurée pour stimuler ta réflexion et ta mémoire synaptique sans te donner les réponses toutes faites.
+                    </p>
+                </div>
+
+                <h2 style="font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 0.5rem;">
+                    <i class="fa-solid fa-compass" style="color: var(--primary); margin-right: 0.5rem;"></i>
+                    Quelle est ta problématique aujourd'hui ?
+                </h2>
+
+                <div class="strategies-grid" id="cards-container">
+                    <!-- Généré dynamiquement -->
+                </div>
+            </section>
+
+            <!-- ================= PAGE 2: WIZARD ================= -->
+            <section id="page-wizard" class="page-view page-hidden">
+                <div class="session-header">
+                    <button onclick="showHub()" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border-radius: 8px; cursor: pointer;">
+                        <i class="fa-solid fa-arrow-left"></i> Retour
+                    </button>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="step-progress-bar"></div>
+                    </div>
+                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary);" id="step-indicator">Étape 1 sur 3</span>
+                </div>
+
+                <div class="neuro-box">
+                    <div style="font-weight: 700; margin-bottom: 0.3rem; color: white;">
+                        <i class="fa-solid fa-atom" style="color: var(--primary);"></i> L'œil du neuroscientifique
+                    </div>
+                    <span id="wizard-neuro">...</span>
+                </div>
+
+                <div class="welcome-card" style="margin-bottom: 1.5rem;">
+                    <span class="strategy-badge" id="wizard-badge">Approche #1</span>
+                    <h2 style="font-size: 1.3rem; color: white; margin-top: 0.5rem;" id="wizard-title">Audit de Compréhension</h2>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);" id="wizard-subtitle">Éprouve la solidité de ta compréhension d'un sujet.</p>
+                </div>
+
+                <form id="wizard-form" onsubmit="event.preventDefault(); handleNextStep();">
+                    <div id="step-content-container">
+                        <!-- Généré dynamiquement -->
+                    </div>
+
+                    <div class="button-group-row">
+                        <button type="button" id="btn-prev" onclick="handlePrevStep()" class="action-btn btn-secondary">
+                            <i class="fa-solid fa-chevron-left"></i> Précédent
+                        </button>
+                        <button type="submit" id="btn-next" class="action-btn">
+                            <span id="btn-next-label">Étape suivante</span> <i class="fa-solid fa-chevron-right" id="btn-next-icon"></i>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- ================= PAGE 3: RESULT ================= -->
+            <section id="page-result" class="page-view page-hidden">
+                <div class="welcome-card" style="text-align: center;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 2rem; color: var(--success); margin-bottom: 0.5rem;"></i>
+                    <h3>Ton prompt sur mesure est prêt !</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        Copie ce prompt et colle-le directement dans ChatGPT, Claude ou NotebookLM.
+                    </p>
+                </div>
+
+                <!-- AVERTISSEMENT PIÈCE JOINTE (AFFICHÉ SEULEMENT SI OPTION COCHÉE) -->
+                <div id="pj-warning-box" style="display: none; background: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning); padding: 1rem 1.25rem; border-radius: 0 12px 12px 0; margin-bottom: 1.5rem; font-size: 0.9rem; color: #fef08a;">
+                    <strong style="color: var(--warning); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                        <i class="fa-solid fa-paperclip"></i> RAPPEL - PIÈCE JOINTE (PJ) :
+                    </strong>
+                    N'oublie pas d'attacher ton document (cours, sujet, dossier de projet, cahier des charges) en <strong>PIÈCE JOINTE (PJ)</strong> dans ton IA en envoyant ce prompt !
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label id="result-filename" style="margin: 0; font-family: monospace;">prompt_stratege.txt</label>
+                        <button type="button" onclick="toggleEditResult()" id="btn-toggle-edit" class="btn-secondary" style="padding: 0.3rem 0.75rem; font-size: 0.8rem; border-radius: 6px; cursor: pointer;">
+                            <i class="fa-solid fa-pen-to-square"></i> Modifier
+                        </button>
+                    </div>
+                    <textarea id="result-prompt-text" class="prompt-output-box" readonly></textarea>
+                </div>
+
+                <div class="button-group-row">
+                    <button type="button" onclick="copyGeneratedPrompt()" class="action-btn">
+                        <i class="fa-solid fa-copy"></i> Copier le prompt
+                    </button>
+                    <button type="button" onclick="showHub()" class="action-btn btn-secondary">
+                        <i class="fa-solid fa-rotate-left"></i> Autre problématique
+                    </button>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <footer>
+        Master Conception de Packaging · ESEPAC · Prompts Pédagogiques &amp; Métacognitifs
+    </footer>
+
+    <script>
+        /* ================= DATA STRUCTURE (5 STRATEGIST APPROACHES) ================= */
+        const STRATEGIES = [
+            {
+                id: 'audit',
+                title: "Audit de Compréhension",
+                badge: "Approche #1",
+                subtitle: "Éprouve la solidité de ta compréhension d'un sujet.",
+                icon: "fa-brain",
+                tag: "Synthèse & Cours",
+                neuro: "🧠 <strong>Signal d'erreur</strong> : En soumettant ta propre synthèse, ton cerveau formule une hypothèse active. L'IA pointera uniquement tes failles sans te donner la réponse toute faite.",
+                fields: [
+                    {
+                        key: "domain",
+                        label: "1. Ton cursus ou spécialité",
+                        placeholder: "ex. Master Conception de Packaging, Ingénierie Matériaux & Emballages...",
+                        type: "input",
+                        help: "Permet à l'IA d'adopter le bon niveau de langage et la rigueur technique du packaging."
+                    },
+                    {
+                        key: "subject",
+                        label: "2. Sujet précis ou étude de cas packaging",
+                        placeholder: "ex. Propriétés barrières OTR/WVTR des complexes rPET/PE, recyclabilité PPWR...",
+                        type: "input",
+                        help: "Sois précis sur le procédé, le matériau ou la réglementation testée."
+                    },
+                    {
+                        key: "summary",
+                        label: "3. Ta synthèse personnelle ou analyse de dossier",
+                        placeholder: "Rédige ici ce que tu as compris avec tes propres mots...",
+                        type: "textarea",
+                        help: "Plus ta synthèse est personnelle, plus le feedback de l'IA sera percutant !"
+                    },
+                    {
+                        key: "hasAttachment",
+                        label: "4. As-tu un document (cours, sujet) à joindre en Pièce Jointe (PJ) ? (Conseillé ⭐)",
+                        type: "select",
+                        options: [
+                            { value: "yes", label: "⭐ Oui, je vais joindre mon fichier (PDF, Word) [Prompt 10x plus précis]" },
+                            { value: "no", label: "📝 Non, je transmets uniquement mon texte ci-dessus" }
+                        ],
+                        help: "💡 RECOMMANDATION : Joindre ton document permet à l'IA de confronter ta synthèse EXCLUSIVEMENT à la réalité de ton cours."
+                    }
+                ],
+                buildPrompt: (d) => `[CONTEXTE] : Je suis étudiant en ${d.domain || 'Master Conception de Packaging'}. Dans le cadre de mes études packaging, j'ai travaillé sur le sujet suivant : "${d.subject || '[Ton sujet packaging]'}". J'ai rédigé ma propre synthèse ci-dessous.${d.hasAttachment === 'yes' ? '\n\n[PIÈCE JOINTE OBLIGATOIRE] : J\'AI JOINT À CE MESSAGE LE DOCUMENT DE COURS/SUJET EN PIÈCE JOINTE (PJ). TA MISSION EST DE CONFRONTER MA SYNTHÈSE EXCLUSIVEMENT ET STRICTEMENT AUX NOTIONS DE CE FICHIER JOINT.' : ''}
+
+[RÔLE] : Agis comme un enseignant-chercheur et expert en ingénierie et conception de packaging.
+
+[TÂCHE] : Évalue la rigueur technique et la précision de ma compréhension packaging${d.hasAttachment === 'yes' ? ' EN TE BASANT STRICTEMENT SUR LE FICHIER JOINT EN PIÈCE JOINTE (PJ)' : ''}.
+
+[CARACTÉRISTIQUES & CONTRAINTES] :
+1. Ne rédiges SURTOUT PAS une synthèse corrigée à ma place.
+2. Identifie les 3 limites principales de mon texte (contresens technique, omission d'une contrainte d'usage/matériau, ou manque de rigueur)${d.hasAttachment === 'yes' ? ' PAR RAPPORT AU DOCUMENT EN PIÈCE JOINTE (PJ)' : ''}.
+3. Ne me donne pas les réponses directes : formule chaque limite sous la forme d'une question d'explicitation ciblée.
+4. Attends mes réponses avant d'émettre une évaluation globale.
+5. Adapte la difficulté : si mes réponses démontrent une bonne maîtrise, approfondis l'exigence technique ; si ma réponse est floue, recadre la question.
+
+Mon texte à analyser :
+"${d.summary || '[Ta synthèse]'}"`
+            },
+
+            {
+                id: 'socratic',
+                title: "Le Sparring-Partner",
+                badge: "Approche #2",
+                subtitle: "Challenge tes choix techniques et matériaux.",
+                icon: "fa-shield-halved",
+                tag: "Challenge & Analyse",
+                neuro: "⚡ <strong>Engagement Actif</strong> : Te confronter à un contradicteur t'oblige à restructurer tes schémas mentaux et à défendre activement tes choix techniques.",
+                fields: [
+                    {
+                        key: "problem",
+                        label: "1. Problème ou cahier des charges packaging",
+                        placeholder: "ex. Barquette alimentaire thermoformée étanche sans PFAS pour livraison...",
+                        type: "input",
+                        help: "Le besoin fonctionnel ou la contrainte produit/marché."
+                    },
+                    {
+                        key: "solution",
+                        label: "2. Ta proposition de conception ou choix matériau",
+                        placeholder: "ex. Complexe carton/PE à 5% recyclable avec opercule bio-sourcé...",
+                        type: "textarea",
+                        help: "Présente ta solution même incomplète."
+                    },
+                    {
+                        key: "hasAttachment",
+                        label: "3. As-tu un cahier des charges à joindre en Pièce Jointe (PJ) ? (Conseillé ⭐)",
+                        type: "select",
+                        options: [
+                            { value: "yes", label: "⭐ Oui, je vais joindre mon cahier des charges (PDF, Word) [Prompt 10x plus précis]" },
+                            { value: "no", label: "📝 Non, je transmets uniquement mon texte ci-dessus" }
+                        ],
+                        help: "💡 RECOMMANDATION : Joindre ton CDC force l'IA à tester tes choix par rapport aux vraies contraintes de ton projet."
+                    }
+                ],
+                buildPrompt: (d) => `[CONTEXTE] : Je suis étudiant en Master Conception de Packaging et je cherche à résoudre ce besoin : "${d.problem || '[Cahier des charges packaging]'}". J'ai conçu la proposition suivante : "${d.solution || '[Ta solution packaging]'}".${d.hasAttachment === 'yes' ? '\n\n[PIÈCE JOINTE OBLIGATOIRE] : J\'AI JOINT À CE MESSAGE LE CAHIER DES CHARGES EN PIÈCE JOINTE (PJ). TES OBJECTIONS DOIVENT SE BASER STRICTEMENT SUR LES SPÉCIFICATIONS ET NORMES DE CE FICHIER JOINT.' : ''}
+
+[RÔLE] : Agis comme un tuteur socratique et concepteur packaging chevronné.
+
+[TÂCHE] : Challenge ma proposition en pointant ses faiblesses mécaniques, industrielles, d'éco-conception ou d'usage${d.hasAttachment === 'yes' ? ' CONFORMÉMENT AU DOCUMENT JOINT EN PIÈCE JOINTE (PJ)' : ''}.
+
+[CARACTÉRISTIQUES & CONTRAINTES] :
+1. Pose-moi UNE SEULE question d'objection à la fois pour m'obliger à défendre mon choix technique.
+2. Interdiction absolue de me proposer une solution clé en main ou de corriger mon hypothèse.
+3. Exige des justifications concrètes (normes, propriétés matériaux, recyclabilité, procédés).
+4. Régulation dynamique : augmente la complexité de tes contre-arguments si mes justifications sont solides ; simplifie si je peine à répondre.
+
+Ma proposition initiale :
+"${d.solution || '[Ta solution]'}"`
+            },
+
+            {
+                id: 'persona',
+                title: "Oral à Blanc avec l'Expert",
+                badge: "Approche #3",
+                subtitle: "Simule une soutenance face à un expert.",
+                icon: "fa-user-tie",
+                tag: "Jeu de rôle & Métier",
+                neuro: "🎭 <strong>Métacognition</strong> : Te projeter dans la grille d'évaluation d'un professionnel expérimenté développe ton auto-évaluation et ton réalisme terrain.",
+                fields: [
+                    {
+                        key: "project",
+                        label: "1. Projet ou livrable à faire évaluer",
+                        placeholder: "ex. Dossier de conformité PPWR et ACV d'un flacon cosmétique rPET...",
+                        type: "input",
+                        help: "Le projet packaging à soumettre."
+                    },
+                    {
+                        key: "role",
+                        label: "2. Rôle de l'IA (Expert métier)",
+                        placeholder: "ex. Directeur R&D Packaging, Auditeur Conformité PPWR, Responsable Qualité...",
+                        type: "input",
+                        help: "L'autorité industrielle qui va passer ton projet au cribles."
+                    },
+                    {
+                        key: "rules",
+                        label: "3. Normes, contraintes ou grille d'évaluation",
+                        placeholder: "ex. Taux de recyclat rPET > 30%, recyclabilité CITEO, test d'étanchéité...",
+                        type: "textarea",
+                        help: "Renseigne les critères d'évaluation de la filière."
+                    },
+                    {
+                        key: "hasAttachment",
+                        label: "4. As-tu ton dossier à joindre en Pièce Jointe (PJ) ? (Conseillé ⭐)",
+                        type: "select",
+                        options: [
+                            { value: "yes", label: "⭐ Oui, je vais joindre mon dossier/diaporama (PDF, PPT) [Prompt 10x plus précis]" },
+                            { value: "no", label: "📝 Non, je transmets uniquement mon texte ci-dessus" }
+                        ],
+                        help: "💡 RECOMMANDATION : Joindre ton dossier permet une simulation d'oral d'une rigueur professionnelle inégalée."
+                    }
+                ],
+                buildPrompt: (d) => `[CONTEXTE] : En tant qu'étudiant en Master Conception de Packaging, je dois présenter le projet suivant : "${d.project || '[Ton projet packaging]'}". Le projet est soumis aux critères suivants : "${d.rules || '[Règles / Normes]'}".${d.hasAttachment === 'yes' ? '\n\n[PIÈCE JOINTE OBLIGATOIRE] : J\'AI JOINT À CE MESSAGE MON DOSSIER DE SOUTENANCE / RAPPORT EN PIÈCE JOINTE (PJ). AUDITE EXCLUSIVEMENT LES DONNÉES ET RELEVÉS DE CE FICHIER JOINT.' : ''}
+
+[RÔLE] : Agis comme un ${d.role || 'Directeur R&D Packaging'} exigeant ayant 15 ans d'expérience dans l'industrie de l'emballage.
+
+[TÂCHE] : Audite mon projet packaging et soumets-le à une revue critique sans complaisance${d.hasAttachment === 'yes' ? ' EN TE BASANT EXCLUSIVEMENT SUR LE FICHIER JOINT EN PIÈCE JOINTE (PJ)' : ''}.
+
+[CARACTÉRISTIQUES & CONTRAINTES] :
+1. Adopte un ton professionnel, pragmatique et orienté contraintes industrielles.
+2. Relève au moins 2 points de vulnérabilité majeurs (ex. recyclabilité, mécanisation, coût, conformité).
+3. Demande-moi les preuves techniques ou arbitrages manquants avant de valider.
+4. Adapte l'exigence : si mes arguments sont convaincants, pousse l'audit vers des détails techniques plus pointus.
+
+Mon dossier/projet :
+"${d.project || '[Description du projet]'}"`
+            },
+
+            {
+                id: 'feynman',
+                title: "Test de Vulgarisation",
+                badge: "Approche #4",
+                subtitle: "Vérifie ton appropriation d'un sujet en le vulgarisant.",
+                icon: "fa-comments",
+                tag: "Vulgarisation & Test",
+                neuro: "💡 <strong>Learning by Teaching</strong> : Expliquer clairement sans jargon est la preuve ultime de la maîtrise. Si l'IA ne comprend pas, c'est que ton schéma mental est encore flou !",
+                fields: [
+                    {
+                        key: "concept",
+                        label: "1. Concept ou procédé packaging à expliquer",
+                        placeholder: "ex. L'extrusion-soufflage des corps creux, la perméabilité aux gaz OTR/WVTR...",
+                        type: "input",
+                        help: "Le sujet technique à maîtriser."
+                    },
+                    {
+                        key: "explanation",
+                        label: "2. Ton explication simple",
+                        placeholder: "Explique le fonctionnement avec tes propres mots...",
+                        type: "textarea",
+                        help: "Évite de balancer du jargon non défini."
+                    },
+                    {
+                        key: "hasAttachment",
+                        label: "3. As-tu un schéma ou cours à joindre en Pièce Jointe (PJ) ? (Conseillé ⭐)",
+                        type: "select",
+                        options: [
+                            { value: "yes", label: "⭐ Oui, je vais joindre mon schéma/document (PDF, Image) [Prompt 10x plus précis]" },
+                            { value: "no", label: "📝 Non, je transmets uniquement mon texte ci-dessus" }
+                        ],
+                        help: "💡 RECOMMANDATION : L'IA comparera ton explication vulgarisée directement au schéma technique officiel."
+                    }
+                ],
+                buildPrompt: (d) => `[CONTEXTE] : Je suis étudiant en Master Conception de Packaging et je révise le principe suivant : "${d.concept || '[Concept packaging]'}". Je veux vérifier si je maîtrise le principe sans réciter de jargon tout fait.${d.hasAttachment === 'yes' ? '\n\n[PIÈCE JOINTE OBLIGATOIRE] : J\'AI JOINT À CE MESSAGE LE SCHÉMA / DOCUMENT TECHNIQUE EN PIÈCE JOINTE (PJ). VÉRIFIE LA FIABILITÉ DE MON EXPLICATION EXCLUSIVEMENT PAR RAPPORT À CE FICHIER JOINT.' : ''}
+
+[RÔLE] : Agis comme un étudiant débutant et curieux qui découvre le domaine de l'emballage.
+
+[TÂCHE] : Écute mon explication et interromps-moi dès que ma démonstration devient floue, incomplète ou utilise un terme technique non expliqué.
+
+[CARACTÉRISTIQUES & CONTRAINTES] :
+1. Relève immédiatement chaque terme technique du packaging non défini (ex. viscosité, polymère, coextrusion).
+2. Pose des questions simples de bon sens.
+3. Ne me donne jamais la réponse : c'est à moi de trouver la formulation claire.
+4. Régulation adaptative : si ma réexplication est claire, pose une question de nuance plus poussée ; si je m'embrouille, demande-moi une analogie simple.
+
+Mon explication :
+"${d.explanation || '[Ton explication]'}"`
+            },
+
+            {
+                id: 'recall',
+                title: "Flash Quiz Mémorisation",
+                badge: "Approche #5",
+                subtitle: "Teste tes connaissances packaging avec un quiz.",
+                icon: "fa-bullseye",
+                tag: "Quiz & Mémorisation",
+                neuro: "🎯 <strong>Active Recall</strong> : L'effort de sortir une information de son cerveau renforce les connexions synaptiques 10 fois plus qu'une relecture passive !",
+                fields: [
+                    {
+                        key: "course",
+                        label: "1. Domaine de révision packaging",
+                        placeholder: "ex. Réglementation contact alimentaire, ACV packaging, thermoformage...",
+                        type: "input",
+                        help: "Le thème de ton examen ou TP."
+                    },
+                    {
+                        key: "notes",
+                        label: "2. Tes notions clés ou extraits de cours",
+                        placeholder: "Colle ton cours ou les points fondamentaux à tester...",
+                        type: "textarea",
+                        help: "L'IA s'appuiera sur ce contenu pour générer des questions d'application."
+                    },
+                    {
+                        key: "hasAttachment",
+                        label: "3. As-tu ton support de cours complet à joindre en Pièce Jointe (PJ) ? (Conseillé ⭐)",
+                        type: "select",
+                        options: [
+                            { value: "yes", label: "⭐ Oui, je vais joindre mon fichier de cours (PDF, Word) [Quiz 100% ciblé sur ton cours]" },
+                            { value: "no", label: "📝 Non, je transmets uniquement mes notes ci-dessus" }
+                        ],
+                        help: "💡 RECOMMANDATION ESSENTIELLE : Joindre ton cours complet force l'IA à créer un quiz STRICTEMENT ET EXCLUSIVEMENT basé sur ton vrai cours d'examen."
+                    }
+                ],
+                buildPrompt: (d) => `[CONTEXTE] : Je suis étudiant en Master Conception de Packaging et je dois réviser le sujet suivant : "${d.course || '[Thème de cours packaging]'}".${d.hasAttachment === 'yes' ? '\n\n[PIÈCE JOINTE OBLIGATOIRE] : J\'AI JOINT À CE MESSAGE LE SUPPORT DE COURS COMPLET EN PIÈCE JOINTE (PJ).' : ''}
+
+[RÔLE] : Agis comme un enseignant en ingénierie packaging.
+
+[TÂCHE] : GÉNÈRE UN QUIZ INTERACTIF SÉQUENTIEL${d.hasAttachment === 'yes' ? ' BASÉ EXCLUSIVEMENT ET UNIQUEMENT SUR LE CONTENU DU FICHIER JOINT EN PIÈCE JOINTE (PJ). TOUTES TES QUESTIONS DOIVENT PORTER STRICTEMENT SUR LES NOTIONS DE CE DOCUMENT JOINT.' : ' POUR TESTER MA MÉMOIRE ET MA CAPACITÉ D\'APPLICATION PRATIQUE.'}
+
+[CARACTÉRISTIQUES & CONTRAINTES] :
+1. Rédige 3 mini-cas pratiques d'application concrète en conception d'emballage${d.hasAttachment === 'yes' ? ' TIRÉS STRICTEMENT DU FICHIER EN PIÈCE JOINTE (PJ)' : ''}.
+2. Ne me donne AUCUN corrigé ou indice d'emblée.
+3. Soumets-moi LA PREMIÈRE QUESTION UNIQUEMENT. Attends ma réponse avant de passer à la suivante.
+4. Ajuste la difficulté : si je réponds correctement et avec précision, augmente le niveau de complexité de la question suivante ; si ma réponse est incomplète, approfondis le point faible avant d'avancer.
+
+Périmètre de cours :
+"${d.notes || '[Tes notions/cours]'}"`
+            }
+        ];
+
+        /* ================= STATE MANAGEMENT ================= */
+        let currentStrategyId = null;
+        let currentStepIndex = 0;
+        let formData = {};
+
+        /* ================= INITIALIZATION ================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            renderHubCards();
+        });
+
+        /* ================= HUB RENDERING ================= */
+        function renderHubCards() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = STRATEGIES.map(st => `
+                <div onclick="startWizard('${st.id}')" class="strategy-btn">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <span class="strategy-badge">${st.badge}</span>
+                            <i class="fa-solid ${st.icon}" style="color: var(--primary); font-size: 1.1rem;"></i>
+                        </div>
+                        <h3 class="strategy-title">${st.title}</h3>
+                        <p class="strategy-desc">${st.subtitle}</p>
+                    </div>
+                    <div class="strategy-footer">
+                        <span>${st.tag}</span>
+                        <span>Lancer <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* ================= NAVIGATION FUNCTIONS ================= */
+        function switchView(viewId) {
+            document.querySelectorAll('.page-view').forEach(el => {
+                el.classList.remove('page-active');
+                el.classList.add('page-hidden');
+            });
+
+            const activeView = document.getElementById(viewId);
+            activeView.classList.remove('page-hidden');
+            activeView.classList.add('page-active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showHub() {
+            switchView('page-hub');
+        }
+
+        /* ================= WIZARD LOGIC ================= */
+        function startWizard(strategyId) {
+            currentStrategyId = strategyId;
+            currentStepIndex = 0;
+            formData = {};
+
+            const st = STRATEGIES.find(s => s.id === strategyId);
+            if (!st) return;
+
+            document.getElementById('wizard-badge').innerText = st.badge;
+            document.getElementById('wizard-title').innerText = st.title;
+            document.getElementById('wizard-subtitle').innerText = st.subtitle;
+            document.getElementById('wizard-neuro').innerHTML = st.neuro;
+
+            renderStep();
+            switchView('page-wizard');
+        }
+
+        function renderStep() {
+            const st = STRATEGIES.find(s => s.id === currentStrategyId);
+            if (!st) return;
+
+            const totalSteps = st.fields.length;
+            const field = st.fields[currentStepIndex];
+
+            // Progress bar
+            const percent = ((currentStepIndex + 1) / totalSteps) * 100;
+            document.getElementById('step-progress-bar').style.width = `${percent}%`;
+            document.getElementById('step-indicator').innerText = `Étape ${currentStepIndex + 1} sur ${totalSteps}`;
+
+            // Container content
+            const container = document.getElementById('step-content-container');
+            const savedValue = formData[field.key] || '';
+
+            let inputHtml = '';
+            if (field.type === 'textarea') {
+                inputHtml = `
+                    <textarea 
+                        id="wizard-input" 
+                        rows="5" 
+                        placeholder="${field.placeholder || ''}"
+                        required
+                    >${savedValue}</textarea>
+                `;
+            } else if (field.type === 'select') {
+                inputHtml = `
+                    <select id="wizard-input" style="width: 100%; background: rgba(15,23,42,0.9); border: 2px solid rgba(255,255,255,0.15); color: white; padding: 1rem 1.25rem; border-radius: 12px; font-family: inherit; font-size: 1rem; cursor: pointer;">
+                        ${field.options.map(opt => `<option value="${opt.value}" ${savedValue === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                    </select>
+                `;
+            } else {
+                inputHtml = `
+                    <input 
+                        type="text" 
+                        id="wizard-input" 
+                        value="${savedValue}"
+                        placeholder="${field.placeholder || ''}"
+                        required 
+                        autocomplete="off"
+                    />
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="form-group">
+                    <label style="font-size: 1.1rem; color: white; margin-bottom: 0.25rem;">
+                        ${field.label}
+                    </label>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">${field.help}</p>
+                    ${inputHtml}
+                </div>
+            `;
+
+            setTimeout(() => {
+                const inputEl = document.getElementById('wizard-input');
+                if (inputEl) inputEl.focus();
+            }, 100);
+
+            // Buttons state
+            const prevBtn = document.getElementById('btn-prev');
+            if (currentStepIndex === 0) {
+                prevBtn.style.opacity = '0.5';
+                prevBtn.style.pointerEvents = 'none';
+            } else {
+                prevBtn.style.opacity = '1';
+                prevBtn.style.pointerEvents = 'auto';
+            }
+
+            const isLast = currentStepIndex === totalSteps - 1;
+            document.getElementById('btn-next-label').innerText = isLast ? 'Générer mon Prompt' : 'Étape suivante';
+            document.getElementById('btn-next-icon').className = isLast ? 'fa-solid fa-wand-magic-sparkles' : 'fa-solid fa-chevron-right';
+        }
+
+        function handleNextStep() {
+            const st = STRATEGIES.find(s => s.id === currentStrategyId);
+            if (!st) return;
+
+            const inputEl = document.getElementById('wizard-input');
+            if (!inputEl) return;
+
+            if (!inputEl.value.trim()) {
+                inputEl.classList.add('input-error');
+                inputEl.focus();
+                setTimeout(() => inputEl.classList.remove('input-error'), 800);
+                return;
+            }
+
+            const field = st.fields[currentStepIndex];
+            formData[field.key] = inputEl.value.trim();
+
+            if (currentStepIndex < st.fields.length - 1) {
+                currentStepIndex++;
+                renderStep();
+            } else {
+                generateFinalPrompt();
+            }
+        }
+
+        function handlePrevStep() {
+            if (currentStepIndex > 0) {
+                currentStepIndex--;
+                renderStep();
+            }
+        }
+
+        /* ================= RESULT & GENERATION ================= */
+        function generateFinalPrompt() {
+            const st = STRATEGIES.find(s => s.id === currentStrategyId);
+            if (!st) return;
+
+            const fullPromptText = st.buildPrompt(formData);
+
+            // Toggle PJ warning box dynamically
+            const warningBox = document.getElementById('pj-warning-box');
+            if (warningBox) {
+                warningBox.style.display = (formData.hasAttachment === 'yes') ? 'block' : 'none';
+            }
+
+            document.getElementById('result-filename').innerText = `prompt_${st.id}_stratege.txt`;
+            document.getElementById('result-prompt-text').value = fullPromptText;
+
+            switchView('page-result');
+        }
+
+        function toggleEditResult() {
+            const textarea = document.getElementById('result-prompt-text');
+            const btn = document.getElementById('btn-toggle-edit');
+
+            if (textarea.hasAttribute('readonly')) {
+                textarea.removeAttribute('readonly');
+                textarea.focus();
+                btn.innerHTML = `<i class="fa-solid fa-check" style="color: var(--success);"></i> <span style="color: var(--success);">Verrouiller</span>`;
+            } else {
+                textarea.setAttribute('readonly', 'true');
+                btn.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> <span>Modifier</span>`;
+            }
+        }
+
+        function copyGeneratedPrompt() {
+            const textarea = document.getElementById('result-prompt-text');
+            const textToCopy = textarea.value;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showToast('Prompt copié dans le presse-papier !');
+                }).catch(() => {
+                    fallbackCopy(textarea);
+                });
+            } else {
+                fallbackCopy(textarea);
+            }
+        }
+
+        function fallbackCopy(textarea) {
+            textarea.select();
+            document.execCommand('copy');
+            showToast('Prompt copié dans le presse-papier !');
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
